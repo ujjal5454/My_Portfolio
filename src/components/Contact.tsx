@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
-import { useToast } from '@/hooks/use-toast';
+import { useToast } from "@/components/hooks/use-toast";
 import { Mail, Phone, Linkedin, Github, Send, MapPin, Clock } from 'lucide-react';
 
 const Contact = () => {

@@ -1,6 +1,7 @@
 import React from 'react';
 import { ArrowDown, Code, Brain, Github, Linkedin, Mail } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import heroImg from '/public/uploads/my_photo.jpg'; // Update with your actual image filename
 
 const Hero = () => {
   const scrollToSection = (href: string) => {
@@ -33,7 +34,7 @@ const Hero = () => {
               <div className="absolute -inset-1 bg-gradient-to-r from-primary to-accent rounded-full blur opacity-75 group-hover:opacity-100 transition duration-1000 group-hover:duration-200 animate-pulse"></div>
               <div className="relative w-52 h-52 rounded-full overflow-hidden shadow-2xl backdrop-blur-sm border border-border/50">
                 <img 
-                  src="/lovable-uploads/b2aae703-7d48-42d9-bc0b-4f8dc4c7e6e7.png" 
+                  src={heroImg}
                   alt="Ujjal Basnet" 
                   className="w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-500"
                 />
