@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -6,17 +6,30 @@ import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { useToast } from "@/components/hooks/use-toast";
 import { Mail, Phone, Linkedin, Github, Send, MapPin, Clock } from 'lucide-react';
+import emailjs from '@emailjs/browser';
 
 const Contact = () => {
+  const formRef = useRef<HTMLFormElement>(null);
   const [formData, setFormData] = useState({
     name: '',
     email: '',
     message: ''
   });
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [userEmail, setUserEmail] = useState('');
   const { toast } = useToast();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  useEffect(() => {
+    // Get email from localStorage on component mount
+    const storedEmail = localStorage.getItem('userEmail');
+    if (storedEmail) {
+      setUserEmail(storedEmail);
+    }
+  }, []);
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setIsSubmitting(true);
     
     // Basic validation
     if (!formData.name || !formData.email || !formData.message) {
@@ -24,7 +37,8 @@ const Contact = () => {
         title: "Error",
         description: "Please fill in all fields",
         variant: "destructive",
-      });
+      })
+      setIsSubmitting(false);
       return;
     }
 
@@ -36,15 +50,50 @@ const Contact = () => {
         description: "Please enter a valid email address",
         variant: "destructive",
       });
+      setIsSubmitting(false);
       return;
     }
 
-    toast({
-      title: "Message Sent! 🚀",
-      description: "Thank you for your message. I'll get back to you soon!",
-    });
+    try {
+      const templateParams = {
+        from_name: formData.name,
+        from_email: formData.email,
+        message: formData.message,
+        to_name: 'Ujjal Basnet',
+        to_email: userEmail || 'ujjalbasnet869@gmail.com', // Fallback to default email if not in localStorage
+        reply_to: formData.email, // Add reply_to field
+        user_email: formData.email, // Add user_email field
+        recipient_email: userEmail || 'ujjalbasnet869@gmail.com', // Add explicit recipient_email field
+      };
 
-    setFormData({ name: '', email: '', message: '' });
+      // Initialize EmailJS with your public key
+      emailjs.init(import.meta.env.VITE_EMAILJS_PUBLIC_KEY || '');
+
+      await emailjs.send(
+        import.meta.env.VITE_EMAILJS_SERVICE_ID || '',
+        import.meta.env.VITE_EMAILJS_TEMPLATE_ID || '',
+        templateParams
+      );
+
+      // Store the sender's email in localStorage
+      localStorage.setItem('userEmail', formData.email);
+
+      toast({
+        title: "Message Sent! 🚀",
+        description: "Thank you for your message. I'll get back to you soon!",
+      });
+
+      setFormData({ name: '', email: '', message: '' });
+    } catch (error) {
+      console.error('Error sending email:', error);
+      toast({
+        title: "Error",
+        description: "Failed to send message. Please try again later.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -57,8 +106,8 @@ const Contact = () => {
   const contactInfo = [
     { 
       label: 'Email', 
-      value: 'ujjalbasnet869@gmail.com', 
-      href: 'mailto:ujjalbasnet869@gmail.com',
+      value: userEmail || 'ujjalbasnet869@gmail.com', 
+      href: `mailto:${userEmail || 'ujjalbasnet869@gmail.com'}`,
       icon: Mail,
       gradient: 'from-red-500 to-pink-500'
     },
@@ -171,7 +220,7 @@ const Contact = () => {
                   </p>
                 </CardHeader>
                 <CardContent>
-                  <form onSubmit={handleSubmit} className="space-y-6">
+                  <form ref={formRef} onSubmit={handleSubmit} className="space-y-6">
                     <div className="grid md:grid-cols-2 gap-4">
                       <div className="space-y-2">
                         <Label htmlFor="name" className="text-sm font-medium">Name *</Label>
@@ -183,6 +232,7 @@ const Contact = () => {
                           placeholder="Your full name"
                           className="bg-background/50 border-border/50 focus:border-primary/50 transition-colors"
                           required
+                          disabled={isSubmitting}
                         />
                       </div>
                       
@@ -197,6 +247,7 @@ const Contact = () => {
                           placeholder="your.email@example.com"
                           className="bg-background/50 border-border/50 focus:border-primary/50 transition-colors"
                           required
+                          disabled={isSubmitting}
                         />
                       </div>
                     </div>
@@ -212,15 +263,17 @@ const Contact = () => {
                         rows={6}
                         className="bg-background/50 border-border/50 focus:border-primary/50 transition-colors resize-none"
                         required
+                        disabled={isSubmitting}
                       />
                     </div>
                     
                     <Button 
                       type="submit" 
                       className="w-full group bg-gradient-to-r from-primary to-primary/90 hover:from-primary/90 hover:to-primary shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300"
+                      disabled={isSubmitting}
                     >
                       <Send size={16} className="mr-2 group-hover:translate-x-1 transition-transform" />
-                      Send Message
+                      {isSubmitting ? 'Sending...' : 'Send Message'}
                     </Button>
                   </form>
                 </CardContent>
