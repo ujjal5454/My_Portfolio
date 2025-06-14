@@ -1,13 +1,38 @@
 import React from 'react';
 import { ArrowDown, Code, Brain, Github, Linkedin, Mail } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import heroImg from '/public/uploads/my_photo.jpg'; // Update with your actual image filename
+import { Button } from './ui/button';
+
+
+// Use a public path for the image, not an import
+const heroImg = "/uploads/my_photo.jpg";
 
 const Hero = () => {
   const scrollToSection = (href: string) => {
     const element = document.querySelector(href);
     if (element) {
       element.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
+  // Function to programmatically download the resume
+  const handleDownloadResume = () => {
+    try {
+      // Create a direct link to the PDF
+      const link = document.createElement('a');
+      link.href = '/uploads/Ujjal_Resume.pdf';
+      link.download = 'Ujjal_Resume.pdf';
+      
+      // Append to document
+      document.body.appendChild(link);
+      
+      // Trigger click
+      link.click();
+      
+      // Cleanup
+      document.body.removeChild(link);
+    } catch (error) {
+      console.error('Download error:', error);
+      alert('Failed to download resume. Please try again.');
     }
   };
 
@@ -93,17 +118,27 @@ const Hero = () => {
             >
               Contact Me
             </Button>
+            <Button
+              variant="secondary"
+              onClick={handleDownloadResume}
+              className="px-8 py-4 text-lg font-semibold bg-secondary text-secondary-foreground hover:bg-secondary/80 transition-all duration-300 shadow-lg relative z-10"
+            >
+              Download Resume
+            </Button>
           </div>
 
           {/* Social links */}
           <div className="flex justify-center space-x-6 mb-12">
-            <a href="#" className="group p-3 rounded-full bg-background/50 backdrop-blur-sm border border-border/50 hover:border-primary/50 hover:bg-primary/5 transition-all duration-300 hover:scale-110">
+            <a href="https://github.com/ujjal5454" className="group p-3 rounded-full bg-background/50 backdrop-blur-sm border border-border/50 hover:border-primary/50 hover:bg-primary/5 transition-all duration-300 hover:scale-110">
               <Github size={24} className="text-muted-foreground group-hover:text-primary transition-colors" />
             </a>
-            <a href="#" className="group p-3 rounded-full bg-background/50 backdrop-blur-sm border border-border/50 hover:border-primary/50 hover:bg-primary/5 transition-all duration-300 hover:scale-110">
+            <a href="https://www.linkedin.com/in/ujjalbasnet69/" className="group p-3 rounded-full bg-background/50 backdrop-blur-sm border border-border/50 hover:border-primary/50 hover:bg-primary/5 transition-all duration-300 hover:scale-110">
               <Linkedin size={24} className="text-muted-foreground group-hover:text-primary transition-colors" />
             </a>
-            <a href="#" className="group p-3 rounded-full bg-background/50 backdrop-blur-sm border border-border/50 hover:border-primary/50 hover:bg-primary/5 transition-all duration-300 hover:scale-110">
+            <a 
+              href="mailto:ujjalbasnet869@gmail.com?subject=Portfolio Contact&body=Hello Ujjal,%0D%0A%0D%0AI would like to connect with you regarding your portfolio.%0D%0A%0D%0ABest regards," 
+              className="group p-3 rounded-full bg-background/50 backdrop-blur-sm border border-border/50 hover:border-primary/50 hover:bg-primary/5 transition-all duration-300 hover:scale-110"
+            >
               <Mail size={24} className="text-muted-foreground group-hover:text-primary transition-colors" />
             </a>
           </div>

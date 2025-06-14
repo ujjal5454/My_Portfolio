@@ -4,6 +4,28 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Download, GraduationCap, Code2, Brain } from 'lucide-react';
 
 const About = () => {
+  // Function to programmatically download the resume
+  const handleDownloadResume = () => {
+    try {
+      // Create a direct link to the PDF
+      const link = document.createElement('a');
+      link.href = '/uploads/Ujjal_Resume.pdf';
+      link.download = 'Ujjal_Resume.pdf';
+      
+      // Append to document
+      document.body.appendChild(link);
+      
+      // Trigger click
+      link.click();
+      
+      // Cleanup
+      document.body.removeChild(link);
+    } catch (error) {
+      console.error('Download error:', error);
+      alert('Failed to download resume. Please try again.');
+    }
+  };
+
   return (
     <section id="about" className="py-20 bg-gradient-to-br from-muted/30 via-background to-muted/20 relative overflow-hidden">
       {/* Background decorations */}
@@ -47,7 +69,10 @@ const About = () => {
                 </div>
               </div>
 
-              <Button className="group bg-gradient-to-r from-primary to-primary/90 hover:from-primary/90 hover:to-primary shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300">
+              <Button 
+                onClick={handleDownloadResume}
+                className="group bg-gradient-to-r from-primary to-primary/90 hover:from-primary/90 hover:to-primary shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300"
+              >
                 <Download size={16} className="mr-2 group-hover:animate-bounce" />
                 Download Resume
               </Button>
